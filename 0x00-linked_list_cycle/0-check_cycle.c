@@ -2,13 +2,22 @@
 #include <stdlib.h>
 #include "lists.h"
 
-
-int check_cycle(listint_t *list) {
-
+/**
+ * check_cycle - checks if a linked list has a cycle
+ * @list: the linked list to check for cycle
+ * Return: 1 if cycle exists; 0 otherwise
+ */
+int check_cycle(listint_t *list)
+{
 	listint_t *walk = list;
-	while (walk) {
-		printf("-->: %d\n", walk->n);
+
+	while (walk)
+	{
+		if (walk->next == list)
+		{
+			return (1);
+		}
 		walk = walk->next;
 	}
-	return 0;
+	return (0);
 }
