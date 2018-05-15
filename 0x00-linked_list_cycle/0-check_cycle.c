@@ -11,6 +11,11 @@ int check_cycle(listint_t *list)
 {
 	listint_t *walk = list;
 
+	if (list == NULL)
+		return (0);
+
+
+
 	while (walk)
 	{
 		if (walk->next == list)
