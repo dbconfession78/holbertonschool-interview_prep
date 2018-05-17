@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "lists.h"
-# include "hash_tables.h"
 
 /**
  * check_cycle - checks if a linked list has a cycle
