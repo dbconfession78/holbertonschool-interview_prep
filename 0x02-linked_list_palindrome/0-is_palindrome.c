@@ -29,11 +29,9 @@ int is_palindrome(listint_t **head)
 	while (arr[i])
 	{
 		if (arr[i] != walk->n)
-			free(arr);
 			return (0);
 		walk = walk->next;
 		i--;
 	}
-	free(arr);
 	return (1);
 }
