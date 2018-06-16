@@ -13,6 +13,9 @@
  */
 int slide_line(int *line, size_t size, int direction)
 {
+	if (line == NULL)
+		return (0);
+
 	if (direction == SLIDE_LEFT)
 		return (slide_left(line, size));
 	if (direction == SLIDE_RIGHT)
@@ -27,17 +30,31 @@ int slide_line(int *line, size_t size, int direction)
  * @line: array to traverse
  * @i: index to begin at
  * @size: size of the array
+ * @direction: direction of slide
  * Return: index of next non-zero or -1 if no non-zeros
  **/
-int get_idx_of_next_non_zero(int *line, int i, size_t size)
+int get_idx_of_next_non_zero(int *line, int i, size_t size, int direction)
 {
-	while (i < (int) size)
+	if (direction == 1)
 	{
-		if (line[i] != 0)
-			return (i);
-		i++;
+		while (i < (int) size)
+		{
+			if (line[i] != 0)
+				return (i);
+			i++;
+		}
+		return (-1);
 	}
-	return (-1);
+	else
+	{
+		while (i > -1)
+		{
+			if (line[i] != 0)
+				return (i);
+			i--;
+		}
+		return (-1);
+	}
 }
 
 
@@ -48,24 +65,47 @@ int get_idx_of_next_non_zero(int *line, int i, size_t size)
  * @line: ptr the line to merge
  * @size: size of the array
  * @next_idx: ptr to idx of next non-zero
+ * @direction: direction of slide
  * Return: void
  **/
-void merge(int *mark, int *i, int *line, int *next_idx)
+void merge(int *mark, int *i, int *line, int *next_idx, int direction,
+		   size_t size)
 {
-	if (*next_idx > -1 && line[*next_idx] == line[*i])
+	if (direction == 1)
 	{
-		if (*mark != -1)
+		if (*next_idx > -1 && line[*next_idx] == line[*i])
 		{
-			line[*mark] = line[*i] + line[*next_idx];
-			line[*i] = 0;
-			*mark = *mark + 1;
-		} else
-		{
-			line[*i] = line[*i] + line[*next_idx];
-			*mark = *i + 1;
+			if (*mark != -1)
+			{
+				line[*mark] = line[*i] + line[*next_idx];
+				line[*i] = 0;
+				*mark = *mark + 1;
+			} else
+			{
+				line[*i] = line[*i] + line[*next_idx];
+				*mark = *i + 1;
+			}
+			line[*next_idx] = 0;
+			*i = *next_idx;
 		}
-		line[*next_idx] = 0;
-		*i = *next_idx;
+	}
+	else
+	{
+		if (*next_idx < (int) size && line[*next_idx] == line[*i])
+		{
+			if (*mark != (int) size)
+			{
+				line[*mark] = line[*i] + line[*next_idx];
+				line[*i] = 0;
+				*mark = *mark - 1;
+			} else
+			{
+				line[*i] = line[*i] + line[*next_idx];
+				*mark = *i - 1;
+			}
+			line[*next_idx] = 0;
+			*i = *next_idx;
+		}
 	}
 }
 
@@ -95,16 +135,18 @@ int slide_left(int *line, size_t size)
 			searching = 0;
 			if (i < (int) size - 1)
 			{
-				next_idx =  get_idx_of_next_non_zero(line, i + 1, size);
-				merge(&mark, &i, line, &next_idx);
+				next_idx =  get_idx_of_next_non_zero(line, i + 1, size, 1);
+				merge(&mark, &i, line, &next_idx, 1, size);
 			} else
+			{
 				line[mark] = line[i];
 				line[i] = 0;
+			}
 		} else
 			if (i < (int) size - 1)
 			{
-				next_idx =  get_idx_of_next_non_zero(line, i + 1, size);
-				merge(&mark, &i, line, &next_idx);
+				next_idx =  get_idx_of_next_non_zero(line, i + 1, size, 1);
+				merge(&mark, &i, line, &next_idx, 1, size);
 			}
 	}
 	return (1);
@@ -118,10 +160,11 @@ int slide_left(int *line, size_t size)
  **/
 int slide_right(int *line, size_t size)
 {
-	int searching, i, mark;
+	int searching, i, mark, next_idx;
 
 	searching = 0; mark = size;
-	for (i = (int) size - 1; i > 0; i--)
+	for (i = ((int) size - 1); i >= 0; i--)
+	{
 		if (line[i] == 0)
 		{
 			if (searching == 0)
@@ -130,32 +173,26 @@ int slide_right(int *line, size_t size)
 				if (mark == (int) size)
 					mark = i;
 			}
-		}
-		else if (searching == 1)
+		} else if (searching == 1)
 		{
 			searching = 0;
-			if (i > 0 && (line[i] == line[i - 1]))
+			if (i > 0)
 			{
-				line[mark] = line[i] + line[i - 1]; line[i - 1] = 0;
-			}
-			else
+				next_idx =  get_idx_of_next_non_zero(line, i - 1, size, 2);
+				merge(&mark, &i, line, &next_idx, 2, size);
+			} else
 				line[mark] = line[i];
-			line[i] = 0; mark--;
+				line[i] = 0;
 		} else
-			if (i > 0 && (line[i] == line[i - 1]))
+			if (i > 0)
 			{
-				if (mark != (int) size)
-				{
-					line[mark] = line[i] + line[i - 1]; line[i] = 0; mark--;
-				} else
-				{
-					line[i] = line[i] + line[i - 1]; mark = i - 1;
-				}
-				line[i - 1] = 0;
+				next_idx =  get_idx_of_next_non_zero(line, i - 1, size, 2);
+				merge(&mark, &i, line, &next_idx, 2, size);
 			}
+	}
 	if (mark != (int) size)
 	{
-		line[mark] = line[i]; line[i] = 0;
+		line[mark] = line[i + 1]; line[i + 1] = 0;
 	}
 	return (1);
 }
