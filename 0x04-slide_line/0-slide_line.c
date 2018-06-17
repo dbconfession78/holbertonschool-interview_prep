@@ -26,88 +26,30 @@ int slide_line(int *line, size_t size, int direction)
 
 
 /**
- * get_idx_of_next_non_zero - returns idx of next non-zero in array
+ * idx_of_next_non_zero - returns idx of next non-zero in array
  * @line: array to traverse
  * @i: index to begin at
  * @size: size of the array
- * @direction: direction of slide
+ * @d: direction of slide
  * Return: index of next non-zero or -1 if no non-zeros
  **/
-int get_idx_of_next_non_zero(int *line, int i, size_t size, int direction)
+int idx_of_next_non_zero(int *line, int i, size_t size, int d)
 {
-	if (direction == 1)
+	if (d == 1)
 	{
-		while (i < (int) size)
-		{
-			if (line[i] != 0)
-				return (i);
-			i++;
-		}
-		return (-1);
+		while (i != (int) size && line[i] == 0)
+			i += 1;
+		return (i);
 	}
-	else
+	if (d == 2)
 	{
-		while (i > -1)
-		{
-			if (line[i] != 0)
-				return (i);
-			i--;
-		}
-		return (-1);
+		while (i != -1 && line[i] == 0)
+			i -= 1;
+		return (i);
 	}
+	return (i);
 }
 
-
-/**
- * merge - shifts array right and adds dupe ints while parsing zeros
- * @mark: ptr to next zero to replace
- * @i: ptr to current index
- * @line: ptr the line to merge
- * @size: size of the array
- * @next_idx: ptr to idx of next non-zero
- * @direction: direction of slide
- * Return: void
- **/
-void merge(int *mark, int *i, int *line, int *next_idx, int direction,
-		   size_t size)
-{
-	if (direction == 1)
-	{
-		if (*next_idx > -1 && line[*next_idx] == line[*i])
-		{
-			if (*mark != -1)
-			{
-				line[*mark] = line[*i] + line[*next_idx];
-				line[*i] = 0;
-				*mark = *mark + 1;
-			} else
-			{
-				line[*i] = line[*i] + line[*next_idx];
-				*mark = *i + 1;
-			}
-			line[*next_idx] = 0;
-			*i = *next_idx;
-		}
-	}
-	else
-	{
-		if (*next_idx < (int) size && line[*next_idx] == line[*i])
-		{
-			if (*mark != (int) size)
-			{
-				line[*mark] = line[*i] + line[*next_idx];
-				line[*i] = 0;
-				*mark = *mark - 1;
-			} else
-			{
-				line[*i] = line[*i] + line[*next_idx];
-				*mark = *i - 1;
-			}
-			line[*next_idx] = 0;
-			*i = *next_idx;
-		}
-	}
-}
 
 /**
  * slide_left - slides array left, parsing zeros and merging duplicate values
@@ -117,11 +59,9 @@ void merge(int *mark, int *i, int *line, int *next_idx, int direction,
  **/
 int slide_left(int *line, size_t size)
 {
-	int searching, i, mark, next_idx;
+	int mark = -1; int searching = 0; int i = 0; int ionnz;
 
-	searching = 0; mark = -1;
-	for (i = 0; i < (int) size; i++)
-	{
+	while (i < (int) size)
 		if (line[i] == 0)
 		{
 			if (searching == 0)
@@ -130,27 +70,79 @@ int slide_left(int *line, size_t size)
 				if (mark == -1)
 					mark = i;
 			}
-		} else if (searching == 1)
+			i++;
+		}
+		else if (searching == 1)
 		{
-			searching = 0;
-			if (i < (int) size - 1)
+			ionnz = idx_of_next_non_zero(line, i + 1, size, 1); searching = 0;
+			if ((ionnz < ((int) size)) && (line[i] == line[ionnz]))
 			{
-				next_idx =  get_idx_of_next_non_zero(line, i + 1, size, 1);
-				merge(&mark, &i, line, &next_idx, 1, size);
-			} else
-			{
-				line[mark] = line[i];
-				line[i] = 0;
+				line[i] = line[i] + line[ionnz]; line[ionnz] = 0;
 			}
-		} else
-			if (i < (int) size - 1)
+			line[mark] = line[i]; line[i] = 0; mark++; i = ionnz;
+		}
+		else
+		{
+			if (((i < ((int) size - 1))) && ((line[i] == line[i + 1])))
 			{
-				next_idx =  get_idx_of_next_non_zero(line, i + 1, size, 1);
-				merge(&mark, &i, line, &next_idx, 1, size);
+				line[i] = line[i] + line[i + 1]; line[i + 1] = 0; mark = i + 1;
 			}
-	}
+			else if ((i < ((int) size) - 1) && ((line[i + 1] == 0)))
+			{
+				ionnz = idx_of_next_non_zero(line, i + 1, size, 1);
+				if (line[i] == line[ionnz])
+				{
+					line[i] = line[i] + line[ionnz]; line[ionnz] = 0; mark = i + 1;
+				}
+			}
+			i++;
+		}
+	post_process(line, size, &mark, &i, 1);
 	return (1);
 }
+
+/**
+ * post_process - handles mark reassignment after main loop
+ * @line: integer array
+ * @size: size of array
+ * @mark: pointer to mark
+ * @i: pointer to i
+ * @direction: designates if line slides left or right
+ * Return: void
+ */
+void post_process(int *line, size_t size, int *mark, int *i, int direction)
+{
+	if (direction == 1)
+	{
+		if (*i != -1 && *i > ((int) size) - 1)
+		{
+			*i = size - 1;
+			if ((*mark < ((int) size)) && (*mark > -1) && ((*mark != (int) size - 1)))
+			{
+				if (line[*mark] == 0)
+				{
+					line[*mark] = line[*i]; line[*i] = 0;
+				}
+			}
+		}
+	}
+	if (direction == 2)
+	{
+		if (*i != (int) size && *i < 0)
+		{
+			*i = 0;
+			if (*mark < (int) size && *mark > -1 && *mark != 0)
+			{
+				if (line[*mark] == 0)
+				{
+					line[*mark] = line[*i];
+					line[*i] = 0;
+				}
+			}
+		}
+	}
+}
+
 
 /**
  * slide_right - slides array right, parsing zeros and merging duplicate values
@@ -160,11 +152,9 @@ int slide_left(int *line, size_t size)
  **/
 int slide_right(int *line, size_t size)
 {
-	int searching, i, mark, next_idx;
+	int searching = 0; int mark = (int) size; int i = ((int) size) - 1; int ionnz;
 
-	searching = 0; mark = size;
-	for (i = ((int) size - 1); i >= 0; i--)
-	{
+	while (i > -1)
 		if (line[i] == 0)
 		{
 			if (searching == 0)
@@ -173,26 +163,33 @@ int slide_right(int *line, size_t size)
 				if (mark == (int) size)
 					mark = i;
 			}
-		} else if (searching == 1)
+			i--;
+		}
+		else if (searching == 1)
 		{
-			searching = 0;
-			if (i > 0)
+			ionnz = idx_of_next_non_zero(line, i - 1, size, 2); searching = 0;
+			if (ionnz > -1 && line[i] == line[ionnz])
 			{
-				next_idx =  get_idx_of_next_non_zero(line, i - 1, size, 2);
-				merge(&mark, &i, line, &next_idx, 2, size);
-			} else
-				line[mark] = line[i];
-				line[i] = 0;
-		} else
-			if (i > 0)
-			{
-				next_idx =  get_idx_of_next_non_zero(line, i - 1, size, 2);
-				merge(&mark, &i, line, &next_idx, 2, size);
+				line[i] = line[i] + line[ionnz]; line[ionnz] = 0;
 			}
-	}
-	if (mark != (int) size)
-	{
-		line[mark] = line[i + 1]; line[i + 1] = 0;
-	}
+			line[mark] = line[i]; line[i] = 0; mark--; i = ionnz;
+		}
+		else
+		{
+			if ((i > 0) && (line[i] == line[i - 1]))
+			{
+				line[i] = line[i] + line[i - 1]; line[i - 1] = 0; mark = i - 1;
+			}
+			else if ((i > 0) && (line[i - 1] == 0))
+			{
+				ionnz = idx_of_next_non_zero(line, i - 1, size, 2);
+				if (line[i] == line[ionnz])
+				{
+					line[i] = line[i] + line[ionnz]; line[ionnz] = 0; mark = i - 1;
+				}
+			}
+			i--;
+		}
+	post_process(line, size, &mark, &i, 2);
 	return (1);
 }
