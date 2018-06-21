@@ -43,6 +43,10 @@ void menger(int level)
 		else
 			recurse(sponge, 0, level, 3, 3);
 	print_sponge(sponge, p);
+	for (i=0; i < p; i++)
+		free(sponge[i]);
+	free(sponge);
+	
 	}
 }
 
@@ -70,7 +74,13 @@ char **recurse(char **sponge, int idx, int level, int height, int nxt)
 
 /* expand height by 2* current height */
 	for (i = 0; i < limit * 2; i++, height++)
-		strcpy(sponge[height], sponge[i]);
+	{
+		for (j = 0; sponge[i][j] != '\0'; j++)
+		{
+			sponge[height][j] = sponge[i][j];
+		}
+/*		strcpy(sponge[height], sponge[i]); */
+	}
 
 /* remove center */
 	div = height / 3;
