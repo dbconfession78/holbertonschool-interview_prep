@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "lists.h"
 
+
 /**
  * is_palindrome - checks if a linked list is a palindrome.
  * @head:  pointer to the head of a singly linked list.
@@ -9,29 +10,66 @@
  */
 int is_palindrome(listint_t **head)
 {
-	listint_t *walk;
-	int *arr;
-	int i;
+	listint_t *f;
+	listint_t *s;
+	listint_t *w;
+	listint_t *mid;
+	int _len;
 
-	walk = *head;
-	if (walk == NULL)
+	if (*head == NULL || head == NULL)
 		return (1);
-	arr = malloc(sizeof(int) * 256);
-	i = 0;
-	while (walk->next)
+
+	f = *head;
+	s = *head;
+	_len = 0;
+	while (f->next)
 	{
-		arr[i] = walk->n;
-		i++;
-		walk = walk->next;
+		_len++;
+		if (f->next->next)
+		{
+			f = f->next;
+			_len++;
+		}
+		f = f->next;
+		s = s->next;
 	}
-	arr[i] = walk->n;
-	walk = *head;
-	while (arr[i])
+	if (f)
+		_len++;
+	mid = reverse(&s);
+	w = mid;
+	s = *head;
+	while (w)
 	{
-		if (arr[i] != walk->n)
+		if (w->n != s->n)
 			return (0);
-		walk = walk->next;
-		i--;
+		w = w->next;
+		s = s->next;
 	}
 	return (1);
+}
+
+
+/**
+ * reverse - reverses the order of nodes starting with the pointer to head
+ * @head:  pointer to the node you want to start the reversal at
+ * Return: new head
+ */
+listint_t *reverse(listint_t **head)
+{
+	listint_t *nxt;
+	listint_t *prev;
+	listint_t *walk;
+
+	walk = *head;
+	prev = NULL;
+	while (walk)
+	{
+		nxt = walk->next;
+		walk->next = prev;
+		prev = walk;
+		if (nxt == NULL)
+			break;
+		walk = nxt;
+	}
+	return (walk);
 }
