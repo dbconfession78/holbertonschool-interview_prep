@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <string.h>
 #include "menger.h"
 
 /**
@@ -11,43 +10,50 @@
  */
 void menger(int level)
 {
-	int p, i;
+	int max_len, i;
 	char **sponge;
+	char symbol;
 
-	if (level < 0)
-		return;
+	symbol = '#';
 	if (level == 0)
-		printf("%c\n", '#');
-	else if (level == 1)
-		printf("###\n# #\n###\n");
-	else
+		printf("%c\n", symbol);
+	else if (level > 0)
 	{
-		p = pow(3, level);
-		sponge = malloc(sizeof(char *) * p);
+		/* malloc: multiply  3^level by the size of a char ptr (8 bytes)
+		 *  e.g. @ level 2: (3^2) * 8 = 72
+		 */
+		max_len = pow(3, level);
+		sponge = malloc(sizeof(char *) * max_len);
 		if (sponge == NULL)
 			return;
 
-		for (i = 0; i < p; i++)
-			sponge[i] = malloc(sizeof(char) * p);
+		for (i = 0; i < max_len; i++)
+			sponge[i] = malloc(sizeof(*sponge[i]) * max_len);
 
-		for (i = 0; i < 3; i++)
-			sponge[0][i] = '#';
-		sponge[1][0] = '#';
-		sponge[1][1] = ' ';
-		sponge[1][2] = '#';
-		for (i = 0; i < 3; i++)
-			sponge[2][i] = '#';
-
-		if (level == 1)
-			print_sponge(sponge, 3);
-		else
-			recurse(sponge, 0, level, 3, 3);
-	print_sponge(sponge, p);
-	for (i=0; i < p; i++)
-		free(sponge[i]);
-	free(sponge);
-	
+		build_level_one_sponge(sponge, symbol);
+		recurse(sponge, 0, level, 3, 3);
+		print_sponge(sponge, max_len);
+		free_sponge(sponge, max_len);
 	}
+}
+
+/**
+ * build_level_one_sponge - constructs 3x3 lvl 1 sponge
+ * @sponge: empty, malloc'd 2d array
+ * @symbol: character used to represent 'non-hole' bytes
+ * Return: void
+ */
+void build_level_one_sponge(char **sponge, char symbol)
+{
+	int i;
+
+	for (i = 0; i < 3; i++)
+		sponge[0][i] = symbol;
+	sponge[1][0] = symbol;
+	sponge[1][1] = ' ';
+	sponge[1][2] = symbol;
+	for (i = 0; i < 3; i++)
+		sponge[2][i] = symbol;
 }
 
 /**
@@ -55,55 +61,69 @@ void menger(int level)
  * @sponge: ptr to char array representing current sponge
  * @idx: current level of sponge
  * @level: size of 2d menger sponge face
- * @height: current height of sponge
+ * @len: current len of sponge
  * @nxt: the index in each row and column at which the sponge will expand
  * Return: ptr to current char array representing 2d menger sponge face
  */
-char **recurse(char **sponge, int idx, int level, int height, int nxt)
+void recurse(char **sponge, int idx, int level, int len, int nxt)
 {
 	int i, j, k, div, mid_start, mid_end, limit;
 
-	if (idx == level - 1)
-		return (sponge);
-
-/* expand width by 2 * current width  */
-	for (i = 0; i < height; i++)
-		for (j = 0, k = nxt; j < nxt * 2; j++, k++)
-			sponge[i][k] = sponge[i][j];
-	limit = height;
-
-/* expand height by 2* current height */
-	for (i = 0; i < limit * 2; i++, height++)
+	if (idx < (level - 1))
 	{
-		for (j = 0; sponge[i][j] != '\0'; j++)
-		{
-			sponge[height][j] = sponge[i][j];
-		}
-/*		strcpy(sponge[height], sponge[i]); */
-	}
+		/* duplicate cols twice (so col count triples)  */
+		for (i = 0; i < len; i++)
+			for (j = 0, k = nxt; j < nxt * 2; j++, k++)
+				sponge[i][k] = sponge[i][j];
+		limit = len;
 
-/* remove center */
-	div = height / 3;
-	mid_start = div;
-	mid_end = (div * 2) - 1;
-	for (i = 0; i < height; i++)
-		if (i >= mid_start && i <= mid_end)
-			for (j = 0; j < height; j++)
-				if (j >= mid_start && j <= mid_end)
-					sponge[i][j] = ' ';
-	nxt = k;
-	return (recurse(sponge, idx + 1, level, height, nxt));
+		/* duplicate rows twice (so row count triples) */
+		for (i = 0; i < limit * 2; i++, len++)
+			for (j = 0; j < 3 * limit; j++)
+				sponge[len][j] = sponge[i][j];
+
+		/* remove center */
+		div = len / 3;
+		mid_start = div;
+		mid_end = (div * 2) - 1;
+		for (i = 0; i < len; i++)
+			if (i >= mid_start && i <= mid_end)
+				for (j = 0; j < len; j++)
+					if (j >= mid_start && j <= mid_end)
+						sponge[i][j] = ' ';
+		nxt = k;
+		recurse(sponge, idx + 1, level, len, nxt);
+	}
 }
 /**
  * print_sponge - prints a 2d menger sponge face  to the standard output
  * @sponge: pointer to char array representing 2d menger sponge face to print
- * @height: height of 2d menger sponge face being printed
+ * @len: len of 2d menger sponge face being printed
  * Return: void
  */
-void print_sponge(char **sponge, int height)
+void print_sponge(char **sponge, int len)
+{
+	int i, j;
+
+	for (i = 0; i < len; i++)
+	{
+		for (j = 0; j < len; j++)
+			printf("%c", sponge[i][j]);
+		printf("\n");
+	}
+}
+
+/**
+ * free_sponge - frees a 2d char array representing one face of a menger sponge
+ * @sponge: pointer to char array representing 2d menger sponge face to print
+ * @max_len: the length of a completed 2d char array
+ * Return: void
+ */
+void free_sponge(char **sponge, int max_len)
 {
 	int i;
 
-	for (i = 0; i < height; i++)
-		printf("%s\n", sponge[i]);
+	for (i = 0; i < max_len; i++)
+		free(sponge[i]);
+	free(sponge);
 }
