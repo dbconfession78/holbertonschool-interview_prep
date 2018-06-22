@@ -19,9 +19,6 @@ void menger(int level)
 		printf("%c\n", symbol);
 	else if (level > 0)
 	{
-		/* malloc: multiply  3^level by the size of a char ptr (8 bytes)
-		 *  e.g. @ level 2: (3^2) * 8 = 72
-		 */
 		max_len = pow(3, level);
 		sponge = malloc(sizeof(char *) * max_len);
 		if (sponge == NULL)
