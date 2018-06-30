@@ -71,7 +71,7 @@ avl_t *helper(avl_t *node, int *array, int left, int right)
 		R->parent = node;
 		node->right = R;
 		R->n = array[right];
-	} else if (left < right)
+	} else if (left < mid && right > mid)
 
 
 /*	if (mid > left && mid < right) */
