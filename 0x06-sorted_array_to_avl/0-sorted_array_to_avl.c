@@ -12,12 +12,11 @@ avl_t *sorted_array_to_avl(int *array, size_t size)
 {
 	avl_t *tree;
 
-	if (array == NULL)
+	if (array == NULL || size == 0)
 		return (NULL);
 
 	tree = init_node();
-	helper(tree, array, 0, size - 1);
-	return (tree);
+	return (helper(tree, array, 0, size - 1));
 }
 
 
@@ -53,18 +52,37 @@ avl_t *helper(avl_t *node, int *array, int left, int right)
 	int mid, val;
 	avl_t *L, *R;
 
-	if (left > right)
-		return (NULL);
+	if (node == NULL)
+		return (node);
+
+/*
+ * if (left > right)
+ *	return (NULL);
+ */
 
 	mid = (left + right) / 2;
 	val = array[mid];
 	node->n = val;
-	L = init_node();
-	R = init_node();
-	L->parent = node;
-	R->parent = node;
-	node->left = helper(L, array, left, mid - 1);
-	node->right = helper(R, array, mid + 1, right);
+
+
+	if (mid + 1 == right)
+	{
+		R = init_node();
+		R->parent = node;
+		node->right = R;
+		R->n = array[right];
+	} else if (left < right)
+
+
+/*	if (mid > left && mid < right) */
+	{
+		L = init_node();
+		R = init_node();
+		L->parent = node;
+		R->parent = node;
+		node->left = helper(L, array, left, mid - 1);
+		node->right = helper(R, array, mid + 1, right);
+	}
 
 	return (node);
 }
