@@ -53,7 +53,7 @@ avl_t *helper(avl_t *node, int *array, int left, int right)
 	avl_t *L, *R;
 
 	if (node == NULL)
-		return (node);
+		return (NULL);
 
 /*
  * if (left > right)
