@@ -10,9 +10,9 @@
  */
 avl_t *sorted_array_to_avl(int *array, size_t size)
 {
-	avl_t *tree;
+	avl_t *tree; /* try setting tree to NULL */
 
-	if (array == NULL || size == 0)
+	if (array == NULL || size < 1)
 		return (NULL);
 
 	tree = init_node();
