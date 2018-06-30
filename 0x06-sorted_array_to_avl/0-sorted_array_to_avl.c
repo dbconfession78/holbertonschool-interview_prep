@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include<stdlib.h>
+#include <stdlib.h>
 #include "binary_trees.h"
 
 /**
@@ -11,6 +11,9 @@
 avl_t *sorted_array_to_avl(int *array, size_t size)
 {
 	avl_t *tree;
+
+	if (array == NULL)
+		return (NULL);
 
 	tree = init_node();
 	helper(tree, array, 0, size - 1);
