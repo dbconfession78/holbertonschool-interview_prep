@@ -64,16 +64,7 @@ avl_t *helper(avl_t *node, int *array, int left, int right)
 	val = array[mid];
 	node->n = val;
 
-
-	if (mid + 1 == right)
-	{
-		R = init_node();
-		R->parent = node;
-		node->right = R;
-		R->n = array[right];
-	} else if (left < mid && right > mid)
-
-
+	if (left < mid)
 /*	if (mid > left && mid < right) */
 	{
 		L = init_node();
@@ -82,6 +73,12 @@ avl_t *helper(avl_t *node, int *array, int left, int right)
 		R->parent = node;
 		node->left = helper(L, array, left, mid - 1);
 		node->right = helper(R, array, mid + 1, right);
+	} else if (mid + 1 == right)
+	{
+		R = init_node();
+/*		R->parent = node; */
+		node->right = R;
+		R->n = array[right];
 	}
 
 	return (node);
