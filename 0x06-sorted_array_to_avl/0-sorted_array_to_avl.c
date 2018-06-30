@@ -2,17 +2,6 @@
 #include<stdlib.h>
 #include "binary_trees.h"
 
-/*
- *void print_tree(avl_t *root)
- *{
- *	if (root == NULL)
- *		return;
- *	print_tree(root->left);
- *	printf("%d\n", root->n);
- *	print_tree(root->right);
- *}
-*/
-
 /**
  * sorted_array_to_avl - creates an avl tree from a sorted array
  * @array: array to convert into an avl tree
@@ -23,37 +12,58 @@ avl_t *sorted_array_to_avl(int *array, size_t size)
 {
 	avl_t *tree;
 
-	tree = malloc(sizeof(avl_t));
-	tree = helper(tree, array, 0, size - 1, size);
+	tree = init_node();
+	helper(tree, array, 0, size - 1);
 	return (tree);
 }
 
 
 /**
- * helper - recursive helper function for sorted_array_to_avl
- * @T: current node
- * @array: the source array
- * @left: ptr to the left node of 'T'
- * @right: ptr to the right node of 'T'
- * @size: length of array
- * Return: new node
+ * init_node - initializes a new node with NULL parent and child ptrs
+ * Return: ptr to new node
  */
-avl_t *helper(avl_t *T, int *array, int left, int right, size_t size)
+avl_t *init_node()
 {
-	int mid;
-	avl_t *new;
+	avl_t *node_ptr;
 
-	if (right < left)
+	node_ptr = malloc(sizeof(avl_t));
+	if (node_ptr == NULL)
 		return (NULL);
 
-	new =  malloc(sizeof(avl_t));
-	if (new == NULL)
+	node_ptr->left = NULL;
+	node_ptr->right = NULL;
+	node_ptr->parent = NULL;
+	return (node_ptr);
+}
+
+
+/**
+ * helper - recursive helper function for sorted_array_to_avl
+ * @node: ptr to current node
+ * @array: source array
+ * @left: ptr to 'node' left child
+ * @right: ptr to 'node' right child
+ * Return: ptr to current noede
+ */
+avl_t *helper(avl_t *node, int *array, int left, int right)
+{
+	int mid, val;
+	avl_t *L, *R;
+
+	if (left > right)
 		return (NULL);
 
-	mid = (right + left) / 2;
-	new->n = array[mid];
+	mid = (left + right) / 2;
+	val = array[mid];
+	node->n = val;
+	L = init_node();
+	R = init_node();
+	L->parent = node;
+	R->parent = node;
+	node->left = L;
+	node->right = R;
+	node->left = helper(L, array, left, mid - 1);
+	node->right = helper(R, array, mid + 1, right);
 
-	new->left = helper(T, array, left, mid - 1, size);
-	new->right = helper(T, array, mid + 1, right, size);
-	return (new);
+	return (node);
 }
