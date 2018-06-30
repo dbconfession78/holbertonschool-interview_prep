@@ -63,8 +63,6 @@ avl_t *helper(avl_t *node, int *array, int left, int right)
 	R = init_node();
 	L->parent = node;
 	R->parent = node;
-	node->left = L;
-	node->right = R;
 	node->left = helper(L, array, left, mid - 1);
 	node->right = helper(R, array, mid + 1, right);
 
