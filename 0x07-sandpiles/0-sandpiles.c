@@ -61,18 +61,18 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 
 	while (done == 0)
 	{
-		print_grid(grid1);
+		my_print_grid(grid1);
 		check_piles(grid1, &done);
 	}
 }
 
 /**
- * print_grid - p a 3x3 grid
+ * my_print_grid - p a 3x3 grid
  * @grid: the grid to print
  * @grid2: second sandpile
  * Return: void
  */  
-void print_grid(int grid[3][3])
+void my_print_grid(int grid[3][3])
 {
 	int i, j;
 
