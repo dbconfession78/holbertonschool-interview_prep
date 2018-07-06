@@ -10,11 +10,12 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 {
 	int i, j;
 	int done = 0;
-	int **overs;
+	int overs[3][3];
 	int flag = 0;
 
 	if (sum_grid(grid1) > 0 && sum_grid(grid2) > 0)
 		flag = 1;
+
 	for (i = 0; i < 3; i++)
 		for (j = 0;  j < 3; j++)
 			grid1[i][j] = grid1[i][j] + grid2[i][j];
@@ -22,25 +23,20 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 		my_print_grid(grid1);
 	while (done == 0)
 	{
-		overs = set_overs(grid1, overs);
+		set_overs(grid1, overs);
 		check_piles(grid1, &done, overs);
 	}
-	for (i = 0; i < 3; i++)
-	{
-		free(overs[i]);
-	}
-	free(overs);
 }
 
 /**
  * check_piles - checks and spills sandpiles where necessary
  * @grid: the sandpile to check
  * @done: ptr to variable indicating if pile is stable
- * @overs: map of source grid indicating which values have overflow 
+ * @overs: map of source grid indicating which values have overflow
  * Return: void
  */
 
-void check_piles(int grid[3][3], int *done, int **overs)
+void check_piles(int grid[3][3], int *done, int overs[3][3])
 {
 	int i, j;
 
@@ -89,25 +85,17 @@ void check_piles(int grid[3][3], int *done, int **overs)
  * @retval: the grid that maps values over 3
  * Return: 1 (over 3) and 0 (under 4) map of source grid
  */
-int **set_overs(int grid[3][3], int **retval)
+void set_overs(int grid[3][3], int retval[3][3])
 {
 	int i, j;
 
-	retval = malloc(sizeof(int *) * 3);
 	for (i = 0; i < 3; i++)
-	{
-		retval[i] = malloc(sizeof(int) * 3);
 		for (j = 0; j < 3; j++)
 			retval[i][j] = 0;
-	}
-
-
 	for (i = 0; i < 3; i++)
 		for (j = 0;  j < 3; j++)
 			if (grid[i][j] > 3)
 				retval[i][j] = 1;
-
-	return (retval);
 }
 
 

@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 void sandpiles_sum(int grid1[3][3], int grid2[3][3]);
-void check_piles(int grid[3][3], int *done, int **overs);
-int **set_overs(int grid[3][3], int **retval);
+void check_piles(int grid[3][3], int *done, int overs[3][3]);
+void set_overs(int grid[3][3], int retval[3][3]);
 void my_print_grid(int grid[3][3]);
 int sum_grid(int grid[3][3]);
 
