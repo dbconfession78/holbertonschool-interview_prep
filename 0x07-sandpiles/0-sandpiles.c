@@ -9,74 +9,61 @@
 void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 {
 	int i, j;
-	int done = 0;
 	int overs[3][3];
-	int flag = 0;
 
-	if (sum_grid(grid1) > 0 && sum_grid(grid2) > 0)
-		flag = 1;
-
+	/* add sandpiles and put result in grid1 */
 	for (i = 0; i < 3; i++)
 		for (j = 0;  j < 3; j++)
 			grid1[i][j] = grid1[i][j] + grid2[i][j];
-	if (flag == 1)
-		my_print_grid(grid1);
-	while (done == 0)
+
+	while (is_done(grid1) == 0)
 	{
+		my_print_grid(grid1);
 		set_overs(grid1, overs);
-		check_piles(grid1, &done, overs);
+		check_piles(grid1, overs);
 	}
+}
+
+/**
+ * is_done - checks stability of sandpile grid
+ * @grid: the sandpile to check
+ * Return: 1 if stable, 0 if unstable
+ */
+int is_done(int grid[3][3])
+{
+	int i, j;
+
+	for (i = 0; i < 3; i++)
+		for (j = 0;  j < 3; j++)
+			if (grid[i][j] > 3)
+				return (0);
+	return (1);
 }
 
 /**
  * check_piles - checks and spills sandpiles where necessary
  * @grid: the sandpile to check
- * @done: ptr to variable indicating if pile is stable
  * @overs: map of source grid indicating which values have overflow
  * Return: void
  */
-
-void check_piles(int grid[3][3], int *done, int overs[3][3])
+void check_piles(int grid[3][3], int overs[3][3])
 {
 	int i, j;
 
-	*done = 1;
 	for (i = 0; i < 3; i++)
 		for (j = 0; j < 3; j++)
-		{
 			if (overs[i][j] == 1)
 			{
 				grid[i][j] -= 4;
-				if (grid[i][j] > 3)
-					*done = 0;
 				if (i > 0)
-				{
 					grid[i - 1][j] += 1;
-					if (grid[i - 1][j] > 3)
-						*done = 0;
-				}
 				if (i < 2)
-				{
 					grid[i + 1][j] += 1;
-					if (grid[i + 1][j] > 3)
-						*done = 0;
-				}
 				if (j > 0)
-				{
 					grid[i][j - 1] += 1;
-					if (grid[i][j - 1] > 3)
-						*done = 0;
-				}
 				if (j < 2)
-				{
 					grid[i][j + 1] += 1;
-					if (grid[i][j + 1] > 3)
-						*done = 0;
-				}
 			}
-		}
-	if (*done == 0)
-		my_print_grid(grid);
 }
 
 /**
@@ -120,20 +107,4 @@ void my_print_grid(int grid[3][3])
 				printf("\n");
 		}
 	}
-}
-
-/**
- * sum_grid - adds all values in a grid
- * @grid: the grid to sum
- * Return: the int sum of the input grid
- */
-int sum_grid(int grid[3][3])
-{
-	int i, j;
-	int retval = 0;
-
-	for (i = 0; i < 3; i++)
-		for (j = 0;  j < 3; j++)
-			retval += grid[i][j];
-	return (retval);
 }
