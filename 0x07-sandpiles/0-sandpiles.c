@@ -11,10 +11,13 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 	int i, j;
 	int overs[3][3];
 
-	/* add sandpiles and put result in grid1 */
 	for (i = 0; i < 3; i++)
+	{
 		for (j = 0;  j < 3; j++)
+		{
 			grid1[i][j] = grid1[i][j] + grid2[i][j];
+		}
+	}
 
 	while (is_done(grid1) == 0)
 	{
@@ -34,9 +37,15 @@ int is_done(int grid[3][3])
 	int i, j;
 
 	for (i = 0; i < 3; i++)
+	{
 		for (j = 0;  j < 3; j++)
+		{
 			if (grid[i][j] > 3)
+			{
 				return (0);
+			}
+		}
+	}
 	return (1);
 }
 
@@ -51,7 +60,9 @@ void check_piles(int grid[3][3], int overs[3][3])
 	int i, j;
 
 	for (i = 0; i < 3; i++)
+	{
 		for (j = 0; j < 3; j++)
+		{
 			if (overs[i][j] == 1)
 			{
 				grid[i][j] -= 4;
@@ -64,6 +75,8 @@ void check_piles(int grid[3][3], int overs[3][3])
 				if (j < 2)
 					grid[i][j + 1] += 1;
 			}
+		}
+	}
 }
 
 /**
@@ -77,12 +90,18 @@ void set_overs(int grid[3][3], int retval[3][3])
 	int i, j;
 
 	for (i = 0; i < 3; i++)
+	{
 		for (j = 0; j < 3; j++)
 			retval[i][j] = 0;
+	}
 	for (i = 0; i < 3; i++)
+	{
 		for (j = 0;  j < 3; j++)
+		{
 			if (grid[i][j] > 3)
 				retval[i][j] = 1;
+		}
+	}
 }
 
 
