@@ -15,7 +15,7 @@ void heap_sort(int *array, size_t size)
 	while (end > 0)
 	{
 		swap(array, end, 0);
-		print_array(array, size);
+		my_print_array(array, size);
 		end--;
 		sift_down(array, 0, end, size);
 	}
@@ -83,7 +83,7 @@ void sift_down(int *a, int start, size_t end, size_t size)
 		if (root_val < child_val)
 		{
 			swap(a, root, child);
-			print_array(a, size);
+			my_print_array(a, size);
 			root = child;
 		}
 		else
