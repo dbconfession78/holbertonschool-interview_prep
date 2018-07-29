@@ -27,7 +27,6 @@ void heap_sort(int *array, size_t size)
  * @a: array whose index values are swapped
  * @i: index of the first value
  * @j: index of the second value
- * @size: length of array
  * Return: void
  */
 void swap(int *a, int i, int j)
@@ -54,7 +53,7 @@ void heapify(int *a, size_t size)
 	{
 		sift_down(a, start, size - 1, size);
 		start--;
-print	}
+	}
 }
 
 
