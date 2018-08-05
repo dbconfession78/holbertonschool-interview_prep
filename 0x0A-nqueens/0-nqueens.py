@@ -77,7 +77,9 @@ def main():
     if n < 4:
         print("N must be at least 4")
         exit(1)
-    print(nQueens(int(n)))
+    solution = nQueens(int(n))
+    for elem in solution:
+        print(elem)
 
 if __name__ == "__main__":
     main()
