@@ -32,14 +32,20 @@ int helper(int *array, int value, size_t l_ptr, size_t r_ptr, int retval)
 	size_t m;
 	int m_val;
 
-	if (l_ptr >= r_ptr)
+	if (l_ptr == r_ptr)
 	{
+		if (array[l_ptr] != array[l_ptr + 1])
+		{
+			printf("Searching in array: ");
+			print_range(array, l_ptr, l_ptr);
+		}
 		if (array[l_ptr] == value)
 			retval = l_ptr;
 		return (retval);
 	}
 	printf("Searching in array: ");
 	print_range(array, l_ptr, r_ptr);
+
 	m = (l_ptr + r_ptr) / 2;
 	m_val = array[m];
 	if (m_val == value)
