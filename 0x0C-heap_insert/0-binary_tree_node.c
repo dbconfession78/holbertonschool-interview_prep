@@ -63,7 +63,7 @@ heap_t *pop(heap_t *stk[MAX], int *top_idx)
 
 /**
  * reset - sets all elements in a heap_t array to NULL
- * @array heap_t array to reset
+ * @array: heap_t array to reset
  * Return: void
  */
 void reset(heap_t *array[MAX])
