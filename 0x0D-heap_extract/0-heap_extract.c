@@ -1,101 +1,142 @@
 #include "binary_trees.h"
 
+/**
+ * heap_extract - extracts the root node of a Max Binary Heap
+ * @root: double pointer to root node of heap
+ * Return: value stored in root node or 0 on fail
+ */
 int heap_extract(heap_t **root)
 {
-	
+	int is_left_side, extract;
+	heap_t *walk, *max_node, *branch, *to_fill;
+	int to_fill_is_left = 0;
+
+	if (root == NULL || *root == NULL)
+		return (0);
+
+	is_left_side = 0;
+	walk = *root;
+	extract = walk->n;
+	branch = NULL;
+	max_node = get_max_node(walk->left, walk->right);
+	if (max_node == walk->left)
+		is_left_side = 1;
+
+	while (walk)
+	{
+		max_node = get_max_node(walk->left, walk->right);
+		if (max_node == NULL)
+			break;
+
+		if (branch == NULL)
+		{
+			if (is_left_side == 1 && max_node == walk->right)
+				branch = walk;
+			if (is_left_side == 0 && max_node == walk->left)
+				branch = walk;
+		}
+
+		walk->n = max_node->n;
+		walk = max_node;
+	}
+	if (walk->parent->left == walk)
+		to_fill_is_left = 1;
+
+	if (branch == NULL)
+		branch = walk->parent;
+
+	to_fill = walk;
+	if (is_left_side == 1)
+		walk = *root;
+	else
+		walk = branch;
+
+	walk_down(walk, to_fill, to_fill_is_left);
+	return (extract);
+}
+
+/**
+ * walk_down - traverse right side until at last parent node
+ * @walk: pointer to node to start at
+ * @to_fill: pointer to last node whose value was moved up
+ * @to_fill_is_left: indicates if 'to_fill' is the left of it's parent
+ * Return: void
+ */
+void walk_down(heap_t *walk, heap_t *to_fill, int to_fill_is_left)
+{
+	heap_t *left;
+	heap_t *right;
+
+	while (walk)
+	{
+		left = walk->left;
+		right = walk->right;
+		if (is_leaf(left) && is_leaf(right))
+		{
+			if (left && right == NULL)
+			{
+				to_fill->n = left->n;
+				left->parent->left = NULL;
+				return;
+			}
+			if (right && left == NULL)
+			{
+				walk->left = right;
+				right->parent->right = NULL;
+			}
+			if (right == NULL)
+			{
+				if (to_fill_is_left)
+				{
+					to_fill->parent->left = NULL;
+				}
+				else
+				{
+					to_fill->n = walk->n;
+					walk->parent->right = NULL;
+				}
+				return;
+			}
+		}
+
+		walk = walk->right;
+	}
+	if (to_fill_is_left)
+		to_fill->parent->left = NULL;
+	else
+		to_fill->parent->right = NULL;
+}
+
+/**
+ * is_leaf - indicates if node is a leaf
+ * @node: pointer to node to identify as leaf
+ * Return: 1 if is a leaf or NULL, 0 otherwise
+ */
+int is_leaf(heap_t *node)
+{
+	if (node == NULL)
+		return (1);
+
+	if (node->left == NULL && node->right == NULL)
+		return (1);
 	return (0);
 }
 
 /**
- * get_next_level_order_node - 
- * @root: pointer to starting heap_t node
- * @node_index: level order index of node value to get
- * Return: int value stored at target node
+ * get_max_node - returns node with higher 'n' of two nodes
+ * @node_a: pointer to first node in comparison
+ * @node_b: pointer to second node in comparison
+ * Return: node_a if node_a->n is higher than node_b->n, node_b otherwise
  */
-int get_next_level_order_node(heap_t *root, int node_index)
+heap_t *get_max_node(heap_t *node_a, heap_t *node_b)
 {
-	int i, top_idx, row_len, done;
-	heap_t *top, *next_row[MAX], *curr_row[MAX];
-
-	top_idx = -1;
-	done = 0;
-	for (i = 0; i < MAX; i++)
-	{
-		curr_row[i] = NULL;
-		next_row[i] = NULL;
-	}
-	if (root == NULL)
-		return (0);
-
-	push(next_row, root, &top_idx);
-	while (node_index > 0 && len(next_row) > 0)
-	{
-		if (done == 1)
-			break;
-		copy_row(next_row, curr_row);
-		row_len = len(curr_row);
-		reset(next_row);
-		top_idx = 0;
-		for (i = 0; i < row_len; i++)
-		{
-			top = pop(curr_row, &top_idx);
-			if (top->left == NULL || top->right == NULL)
-			{
-				new_node->parent = top;
-				done = 1;
-				if (top->left == NULL)
-				{
-					top->left = new_node;
-					break;
-				}
-				top->right = new_node;
-				break;
-			}
-			if (top->left != NULL)
-				push(next_row, top->left, &top_idx);
-			if (top->right != NULL)
-				push(next_row, top->right, &top_idx);
-		}
-		node_index--;
-	}
-	
-}
-
-/**
- * push - appends pointer to heap_t node to end of stack
- * @stk: stqck to append to
- * @node: node to append
- * @top_idx: index to append at
- * Return: void
- */
-void push(heap_t *stk[MAX], heap_t *node, int *top_idx)
-{
-	if (*top_idx == MAX - 1)
-	{
-		printf("\nStack is full!!");
-		exit(1);
-	}
-	*top_idx = *top_idx + 1;
-	stk[*top_idx] = node;
-}
-
-/**
- * pop - remvoes and returns heap_t node from stack
- * @stk: stqck to pop from
- * @top_idx: index to pop at
- * Return: popped heap_t node
- */
-heap_t *pop(heap_t *stk[MAX], int *top_idx)
-{
-	heap_t *node;
-
-	if (*top_idx == -1)
-	{
-		printf("\nStack is empty!!");
-		exit(1);
-	}
-	node = stk[*top_idx];
-	stk[*top_idx] = NULL;
-	*top_idx = *top_idx - 1;
-	return (node);
+	if (node_a == NULL && node_b == NULL)
+		return (NULL);
+	if (node_a == NULL && node_b != NULL)
+		return (node_b);
+	if (node_a != NULL && node_b == NULL)
+		return (node_a);
+	if (node_a->n > node_b->n)
+		return (node_a);
+	return (node_b);
 }

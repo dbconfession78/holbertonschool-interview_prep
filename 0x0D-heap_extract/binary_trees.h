@@ -28,19 +28,8 @@ typedef struct binary_tree_s heap_t;
 
 int heap_extract(heap_t **root);
 void binary_tree_print(const binary_tree_t *tree);
-
-
-binary_tree_t *binary_tree_node(binary_tree_t *parent, int value);
-heap_t *heap_insert(heap_t **root, int value);
-heap_t *sift_up(binary_tree_t *root);
-void add_to_end(heap_t *root, heap_t *new_node);
-
-void push(heap_t *stk[MAX], heap_t *node, int *top_idx);
-heap_t *pop(heap_t *stk[MAX], int *top_idx);
-void reset(heap_t *array[MAX]);
-void copy_row(heap_t *source_row[MAX], heap_t *target_row[MAX]);
-int len(heap_t *array[MAX]);
-
-
+heap_t *get_max_node(heap_t *node_a, heap_t *node_b);
+void walk_down(heap_t *walk, heap_t *to_fill, int to_fill_is_left);
+int is_leaf(heap_t *node);
 
 #endif
