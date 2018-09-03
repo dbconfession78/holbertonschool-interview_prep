@@ -98,9 +98,9 @@ void heapify(heap_t *node)
 
 	while (walk->left != NULL || walk->right != NULL)
 	{
+		curr_val = walk->n;
 		if (walk->left != NULL && walk->right != NULL)
 		{
-			curr_val = walk->n;
 			r_val = walk->right->n;
 			l_val = walk->left->n;
 
@@ -116,6 +116,22 @@ void heapify(heap_t *node)
 				walk->right->n = curr_val;
 				walk = walk->right;
 			}
+		}
+		else if (walk->left != NULL && curr_val < l_val)
+		{
+			walk->n = l_val;
+			walk->left->n = curr_val;
+			walk = walk->left;
+		}
+		else if (walk->right != NULL && curr_val < r_val)
+		{
+			walk->n = r_val;
+			walk->right->n = curr_val;
+			walk = walk->right;
+		}
+		else
+		{
+			return;
 		}
 	}
 }
