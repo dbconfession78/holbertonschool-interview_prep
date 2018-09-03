@@ -7,20 +7,23 @@
  */
 int heap_extract(heap_t **root)
 {
-	int is_left_side, extract;
+	int is_left_side, to_fill_is_left, extract;
 	heap_t *walk, *max_node, *branch, *to_fill;
-	int to_fill_is_left = 0;
 
 	if (root == NULL || *root == NULL)
 		return (0);
 
-	is_left_side = 0;
+	to_fill_is_left = extract = is_left_side = 0;
 	walk = *root;
 	extract = walk->n;
 	branch = NULL;
 	max_node = get_max_node(walk->left, walk->right);
-	if (max_node == walk->left)
-		is_left_side = 1;
+
+	if (max_node == NULL)
+	{
+		*root = NULL;
+		return (extract);
+	}
 
 	while (walk)
 	{
