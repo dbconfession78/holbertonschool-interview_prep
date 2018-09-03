@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX 20
 /**
  * struct binary_tree_s - Binary tree node
  *
@@ -28,8 +27,9 @@ typedef struct binary_tree_s heap_t;
 
 int heap_extract(heap_t **root);
 void binary_tree_print(const binary_tree_t *tree);
-heap_t *get_max_node(heap_t *node_a, heap_t *node_b);
-void walk_down(heap_t *walk, heap_t *to_fill, int to_fill_is_left);
-int is_leaf(heap_t *node);
+heap_t *get_last_insert(heap_t *walk);
+int get_height(heap_t *walk);
+void heapify(heap_t *node);
+int get_node_count(heap_t *walk);
 
 #endif

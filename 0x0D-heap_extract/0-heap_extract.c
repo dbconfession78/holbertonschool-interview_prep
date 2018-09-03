@@ -7,139 +7,137 @@
  */
 int heap_extract(heap_t **root)
 {
-	int is_left_side, to_fill_is_left, extract;
-	heap_t *walk, *max_node, *branch, *to_fill;
+	heap_t *walk, *last_node;
+	int extract, last_val;
 
 	if (root == NULL || *root == NULL)
 		return (0);
 
-	to_fill_is_left = extract = is_left_side = 0;
 	walk = *root;
 	extract = walk->n;
-	branch = NULL;
-	max_node = get_max_node(walk->left, walk->right);
-
-	if (max_node == NULL)
-	{
-		*root = NULL;
-		return (extract);
-	}
-
-	while (walk)
-	{
-		max_node = get_max_node(walk->left, walk->right);
-		if (max_node == NULL)
-			break;
-
-		if (branch == NULL)
-		{
-			if (is_left_side == 1 && max_node == walk->right)
-				branch = walk;
-			if (is_left_side == 0 && max_node == walk->left)
-				branch = walk;
-		}
-
-		walk->n = max_node->n;
-		walk = max_node;
-	}
-	if (walk->parent->left == walk)
-		to_fill_is_left = 1;
-
-	if (branch == NULL)
-		branch = walk->parent;
-
-	to_fill = walk;
-	if (is_left_side == 1)
-		walk = *root;
+	last_node = get_last_insert(walk);
+	last_val = last_node->n;
+	walk->n = last_val;
+	if (last_node->parent != NULL && last_node->parent->left == last_node)
+		last_node->parent->left = NULL;
 	else
-		walk = branch;
-
-	walk_down(walk, to_fill, to_fill_is_left);
+		if (last_node->parent != NULL)
+			last_node->parent->right = NULL;
+	free(last_node);
+	heapify(walk);
 	return (extract);
 }
 
 /**
- * walk_down - traverse right side until at last parent node
- * @walk: pointer to node to start at
- * @to_fill: pointer to last node whose value was moved up
- * @to_fill_is_left: indicates if 'to_fill' is the left of it's parent
+ * get_last_insert - returns a pointer to the last node inserted into heap
+ * @walk: pointer to root node of current recurse
+ * Return: pointer to last node ineserted into heap
+ */
+heap_t *get_last_insert(heap_t *walk)
+{
+	int left_height, right_height, left_count, right_count;
+
+	if (walk == NULL)
+		return (NULL);
+
+	if (walk->left == NULL && walk->right == NULL)
+		return (walk);
+
+	left_height = get_height(walk->left);
+	left_count = get_node_count(walk->left);
+	right_height = get_height(walk->right);
+	right_count = get_node_count(walk->right);
+	if (left_height > right_height)
+		return (get_last_insert(walk->left));
+
+	if (left_count > right_count)
+		return (get_last_insert(walk->right));
+
+	return (get_last_insert(walk->right));
+}
+
+
+
+/**
+ * get_height - recursively gets height of tree from node 'walk'
+ * @walk: pointer to root node of current recurse
+ * Return: int height of heap from starting node
+ */
+int get_height(heap_t *walk)
+{
+	int right_height, left_height;
+
+	right_height = left_height = 0;
+
+	if (walk != NULL)
+	{
+		if (walk->left == NULL && walk->right == NULL)
+			return (1);
+		if (walk->left != NULL)
+			left_height += get_height(walk->left) + 1;
+		if (walk->right != NULL)
+			right_height += get_height(walk->right) + 1;
+	}
+	if (left_height > right_height)
+		return (left_height);
+	return (right_height);
+}
+
+/**
+ * heapify - maintains a max heap data structure
+ * @node: node to begin heapify with
  * Return: void
  */
-void walk_down(heap_t *walk, heap_t *to_fill, int to_fill_is_left)
+void heapify(heap_t *node)
 {
-	heap_t *left;
-	heap_t *right;
+	heap_t *walk = node;
+	int curr_val, l_val, r_val;
 
-	while (walk)
+	if (node == NULL)
+		return;
+
+	while (walk->left != NULL || walk->right != NULL)
 	{
-		left = walk->left;
-		right = walk->right;
-		if (is_leaf(left) && is_leaf(right))
+		if (walk->left != NULL && walk->right != NULL)
 		{
-			if (left && right == NULL)
+			curr_val = walk->n;
+			r_val = walk->right->n;
+			l_val = walk->left->n;
+
+			if (curr_val < l_val && l_val > r_val)
 			{
-				to_fill->n = left->n;
-				left->parent->left = NULL;
-				return;
+				walk->n = l_val;
+				walk->left->n = curr_val;
+				walk = walk->left;
 			}
-			if (right && left == NULL)
+			else
 			{
-				walk->left = right;
-				right->parent->right = NULL;
-			}
-			if (right == NULL)
-			{
-				if (to_fill_is_left)
-				{
-					to_fill->parent->left = NULL;
-				}
-				else
-				{
-					to_fill->n = walk->n;
-					walk->parent->right = NULL;
-				}
-				return;
+				walk->n = r_val;
+				walk->right->n = curr_val;
+				walk = walk->right;
 			}
 		}
-
-		walk = walk->right;
 	}
-	if (to_fill_is_left)
-		to_fill->parent->left = NULL;
-	else
-		to_fill->parent->right = NULL;
 }
 
-/**
- * is_leaf - indicates if node is a leaf
- * @node: pointer to node to identify as leaf
- * Return: 1 if is a leaf or NULL, 0 otherwise
- */
-int is_leaf(heap_t *node)
-{
-	if (node == NULL)
-		return (1);
-
-	if (node->left == NULL && node->right == NULL)
-		return (1);
-	return (0);
-}
 
 /**
- * get_max_node - returns node with higher 'n' of two nodes
- * @node_a: pointer to first node in comparison
- * @node_b: pointer to second node in comparison
- * Return: node_a if node_a->n is higher than node_b->n, node_b otherwise
+ * get_node_count - finds total node count of heap
+ * @walk: pointer of node to start counting from
+ * Return: int vaue of total count
  */
-heap_t *get_max_node(heap_t *node_a, heap_t *node_b)
+int get_node_count(heap_t *walk)
 {
-	if (node_a == NULL && node_b == NULL)
-		return (NULL);
-	if (node_a == NULL && node_b != NULL)
-		return (node_b);
-	if (node_a != NULL && node_b == NULL)
-		return (node_a);
-	if (node_a->n > node_b->n)
-		return (node_a);
-	return (node_b);
+	int retval;
+
+	retval = 0;
+	if (walk != NULL)
+	{
+		if (walk->left != NULL)
+			retval += get_node_count(walk->left);
+		if (walk->right)
+			retval += get_node_count(walk->right);
+		retval++;
+	}
+	return (retval);
 }
