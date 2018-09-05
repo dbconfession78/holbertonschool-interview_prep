@@ -16,6 +16,7 @@ int heap_extract(heap_t **root)
 	walk = *root;
 	extract = walk->n;
 	last_node = get_last_insert(*root);
+	last_val = walk == last_node ? -1 : last_node->n;
 	if (walk == last_node)
 	{
 		free(*root);
@@ -23,8 +24,7 @@ int heap_extract(heap_t **root)
 	}
 	else
 	{
-		last_val = last_node->n;
-		walk->n = last_node->n;
+		walk->n = last_val;
 		if (last_node->parent != NULL && last_node->parent->left == last_node)
 			last_node->parent->left = NULL;
 		else if (last_node->parent != NULL)
