@@ -10,21 +10,28 @@ int heap_extract(heap_t **root)
 	heap_t *walk, *last_node;
 	int extract, last_val;
 
+	last_node = NULL;
 	if (root == NULL || *root == NULL)
 		return (0);
-
 	walk = *root;
 	extract = walk->n;
-	last_node = get_last_insert(walk);
-	last_val = last_node->n;
-	walk->n = last_val;
-	if (last_node->parent != NULL && last_node->parent->left == last_node)
-		last_node->parent->left = NULL;
+	last_node = get_last_insert(*root);
+	if (walk == last_node)
+	{
+		free(*root);
+		*root = NULL;
+	}
 	else
-		if (last_node->parent != NULL)
+	{
+		last_val = last_node->n;
+		walk->n = last_node->n;
+		if (last_node->parent != NULL && last_node->parent->left == last_node)
+			last_node->parent->left = NULL;
+		else if (last_node->parent != NULL)
 			last_node->parent->right = NULL;
-	free(last_node);
-	heapify(walk);
+		free(last_node);
+		heapify(walk);
+	}
 	return (extract);
 }
 
@@ -55,7 +62,6 @@ heap_t *get_last_insert(heap_t *walk)
 
 	return (get_last_insert(walk->right));
 }
-
 
 
 /**
@@ -98,11 +104,11 @@ void heapify(heap_t *node)
 	while (walk->left != NULL || walk->right != NULL)
 	{
 		curr_val = walk->n;
+		r_val = walk->right == NULL ? -1 : walk->right->n;
+		l_val = walk->left == NULL ? -1 : walk->left->n;
 		if (walk->left != NULL && walk->right != NULL)
 		{
-			r_val = walk->right->n;
-			l_val = walk->left->n;
-			if (curr_val < l_val && l_val > r_val)
+			if ((walk->n < l_val) && (l_val > r_val))
 			{
 				walk->n = l_val;
 				walk->left->n = curr_val;
@@ -115,7 +121,7 @@ void heapify(heap_t *node)
 				walk = walk->right;
 			}
 		}
-		else if (walk->left != NULL && curr_val < l_val)
+		else if (walk->left != NULL && (curr_val < l_val))
 		{
 			walk->n = l_val;
 			walk->left->n = curr_val;
@@ -131,7 +137,6 @@ void heapify(heap_t *node)
 			return;
 	}
 }
-
 
 /**
  * get_node_count - finds total node count of heap
