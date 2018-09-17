@@ -11,7 +11,7 @@
  */
 int main(int argc, char **argv)
 {
-	if (argc != 3 || !(is_all_digits(argv[1]) || !(is_all_digits(argv[2]))))
+	if (argc != 3 || is_all_digits(argv[1]) == 0 || is_all_digits(argv[2]) == 0)
 	{
 		print_string("Error");
 		exit(98);
