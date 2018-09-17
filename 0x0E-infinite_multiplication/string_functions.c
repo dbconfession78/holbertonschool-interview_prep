@@ -36,7 +36,7 @@ void multiply(char *a, char *b)
 {
 	int size, max_last_index;
 	char *row, *final_product_string;
-	int buffer_size = 256;
+	int buffer_size = 4096;
 	int row_index = 0;
 	int len_a = get_string_length(a);
 	int len_b = get_string_length(b);
