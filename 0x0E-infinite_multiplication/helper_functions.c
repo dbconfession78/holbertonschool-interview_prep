@@ -71,9 +71,17 @@ char *build_row(int size, int row_idx, char *a, char *b, int len_a, int len_b)
 void print_string(char *s)
 {
 	int i;
+	int is_printing = 0;
 
 	for (i = 0; i < get_string_length(s); i++)
-		_putchar(s[i]);
+	{
+		if (!is_printing && s[i] != '0')
+			is_printing = 1;
+		if (is_printing)
+			_putchar(s[i]);
+	}
+	if (!is_printing)
+		_putchar('0');
 	_putchar('\n');
 }
 

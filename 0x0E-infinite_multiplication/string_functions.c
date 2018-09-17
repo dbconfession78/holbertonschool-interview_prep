@@ -59,6 +59,7 @@ void multiply(char *a, char *b)
 	free(final_product_string);
 }
 
+
 /**
  * sum_strings - sums digit representation of x character arrays
  * @max_last_index: last index of longest string
