@@ -12,12 +12,8 @@
 int main(int argc, char **argv)
 {
 	if (argc != 3 || is_all_digits(argv[1]) == 0 || is_all_digits(argv[2]) == 0)
-	{
-		print_string("Error");
-		exit(98);
-	}
+		_exit(98);
 
 	multiply(argv[1], argv[2]);
-
 	return (0);
 }

@@ -20,5 +20,6 @@ void free_rows(char **rows, int row_count);
 void print_string(char *s);
 char *build_row(int size, int row_idx, char *a, char *b, int len_a, int len_b);
 char *sum_strings(int max_last_index, char **rows, int last_row_index);
-
+void _exit(int exit_code);
+char *_calloc(int length, int element_size);
 #endif

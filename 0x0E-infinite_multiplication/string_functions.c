@@ -34,31 +34,69 @@ int sum_column(char **rows, int column_index, int num_rows)
  */
 void multiply(char *a, char *b)
 {
-	int size, max_last_index;
-	char *row, *final_product_string;
-	int buffer_size = 4096;
-	int row_index = 0;
-	int len_a = get_string_length(a);
-	int len_b = get_string_length(b);
-	char **rows = malloc(sizeof(char *) * (len_b));
+	char *retval = NULL, *temp_string;
+	int len_a, len_b, total_length, i, j, temp, carry, temp_len;
 
-	while (len_b > 0)
+	len_a = get_string_length(a);
+	len_b = get_string_length(b);
+	total_length = len_a + len_b;
+	temp_string = NULL;
+/*	retval = _calloc(total_length, sizeof(char)); */
+/*	retval = malloc((total_length+1) * sizeof(char)); */
+	retval = malloc(4068 * sizeof(char));
+	if (!retval)
+		_exit(98);
+
+	for (i = 0; i < total_length; i++)
+		retval[i] = '0';
+	if (len_b > len_a)
 	{
-		size = buffer_size + row_index;
-		row  = build_row(size, row_index, a, b, len_a, len_b);
-		reverse_string(row);
-		rows[row_index] = row;
-		row_index++, len_b--;
+		temp_string = a;
+		a = b;
+		b = temp_string;
+		temp_len = len_a;
+		len_a = len_b;
+		len_b = temp_len;
 	}
-	max_last_index = get_string_length(rows[row_index - 1]) - 1;
-	final_product_string = sum_strings(max_last_index, rows, row_index);
-	reverse_string(final_product_string);
-	print_string(final_product_string);
-	free_rows(rows, row_index);
-	free(rows);
-	free(final_product_string);
+	carry = 0;
+	for (i = len_b - 1; i >= 0; i--)
+	{
+		for (j = len_a - 1; j >= 0; j--)
+		{
+			temp = (b[i] - '0') * (a[j] - '0');
+			temp += (retval[(i + j + 1)] - '0') + carry;
+			carry = temp / 10;
+			retval[(i + j + 1)] = (temp % 10) + '0';
+		}
+		if (carry != 0)
+			retval[i] = carry + '0';
+		carry = 0;
+	}
+	print_string(retval);
+	free(retval);
 }
 
+
+/**
+ * _calloc- allocates memory + populates elems of char array with supplied char
+ * @length: number of elements to allocate memory for
+ * @element_size: amount of memory to allocate for each element
+ * Return: the allocated array
+ */
+char *_calloc(int length, int element_size)
+{
+	int i;
+	char *array = NULL;
+
+	array = malloc(length * element_size);
+	if (!array)
+		_exit(98);
+
+	for (i = 0; i < length; i++)
+		array[i] = '0';
+	return (array);
+
+}
 
 /**
  * sum_strings - sums digit representation of x character arrays
@@ -70,9 +108,19 @@ void multiply(char *a, char *b)
 char *sum_strings(int max_last_index, char **rows, int last_row_index)
 {
 	int i, column_index, carry;
-	char *final_product_string = malloc(sizeof(char) * max_last_index + 2);
+	char *retval;
+/*	char *retval = malloc(sizeof(char) * max_last_index + 2); */
+/* 	total_length = len_a + len_b; */
+/* 	retval = malloc(total_length + 2 * sizeof(char)); */
+	retval = NULL;
+	if (retval == NULL)
+	{
+		print_string("Error");
+		exit(98);
+	}
 
 	i = column_index = carry = 0;
+
 	while (column_index <= max_last_index)
 	{
 		int sum = sum_column(rows, column_index, last_row_index) + carry;
@@ -83,15 +131,15 @@ char *sum_strings(int max_last_index, char **rows, int last_row_index)
 			carry = sum / 10;
 			sum %= 10;
 		}
-		final_product_string[i] = int_to_char(sum);
+		retval[i] = int_to_char(sum);
 		if (i == max_last_index)
 		{
-			final_product_string[i + 1] = '\0';
+			retval[i + 1] = '\0';
 		}
-		i++;
+/*		i++; */
 		column_index++;
 	}
-	return (final_product_string);
+	return (retval);
 }
 
 /**

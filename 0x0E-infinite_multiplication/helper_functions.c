@@ -73,16 +73,19 @@ void print_string(char *s)
 	int i;
 	int is_printing = 0;
 
-	for (i = 0; i < get_string_length(s); i++)
+	if (s)
 	{
-		if (!is_printing && s[i] != '0')
-			is_printing = 1;
-		if (is_printing)
-			_putchar(s[i]);
+		for (i = 0; s[i] ; i++)
+		{
+			if (!is_printing && s[i] != '0')
+				is_printing = 1;
+			if (is_printing)
+				_putchar(s[i]);
+		}
+		if (!is_printing)
+			_putchar('0');
+		_putchar('\n');
 	}
-	if (!is_printing)
-		_putchar('0');
-	_putchar('\n');
 }
 
 /**
@@ -119,4 +122,15 @@ int get_string_length(char *s)
 		length++;
 	}
 	return (length);
+}
+
+/**
+ * _exit - custom exit with message
+ * @exit_code: exit code
+ * Return: void
+ */
+void _exit(int exit_code)
+{
+	print_string("Error");
+	exit(exit_code);
 }
