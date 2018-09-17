@@ -47,19 +47,16 @@ int is_all_digits(char *s)
  */
 void multiply(char *a, char *b)
 {
-	int size, i, x, carry, max_last_index;
+	int size, max_last_index;
 	char *row, *final_product_string;
 	int buffer_size = 256;
-	int column_index, row_index = 0;
+	int row_index = 0;
 	int len_a = get_string_length(a);
 	int len_b = get_string_length(b);
 	char **rows = malloc(sizeof(char *) * (len_b));
 
 	while (len_b > 0)
 	{
-		char char_b;
-		int int_b, index_a, carry;
-
 		size = buffer_size + row_index;
 		row  = build_row(size, row_index, a, b, len_a, len_b);
 		reverse_string(row);
