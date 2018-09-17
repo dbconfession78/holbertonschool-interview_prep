@@ -9,7 +9,7 @@ int char_to_int(char c)
 {
 	if (c < 48 || c > 57)
 	{
-		printf("Error\n");
+		print_string("Error");
 		exit(98);
 	}
 	return (c - 48);

@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 {
 	if (argc != 3 || !(is_all_digits(argv[1]) || !(is_all_digits(argv[2]))))
 	{
-		printf("Error\n");
+		print_string("Error");
 		exit(98);
 	}
 
