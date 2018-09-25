@@ -21,10 +21,10 @@ listint_t *find_listint_loop(listint_t *head)
 			if (&walk->n < &walk->next->n)
 			{
 				walk = walk->next;
-				break;
+				return (walk);
 			}
 		}
 		walk = walk->next;
 	}
-	return (walk);
+	return (NULL);
 }
