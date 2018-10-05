@@ -25,7 +25,7 @@ class LogParser:
                 self.log[status] += 1
                 if i % 10 == 0 and i > 0:
                     self.print_stats()
-                i += 1
+            i += 1
 
     def print_stats(self):
         """ outputs current state of code count and total file size """
