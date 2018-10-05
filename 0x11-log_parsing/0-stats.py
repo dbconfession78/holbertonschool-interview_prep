@@ -6,12 +6,15 @@ import sys
 
 
 class LogParser:
+    """ parses total file size and status code count from input """
     def __init__(self):
+        """ initializes LogParser """
         self.size = 0
         self.codes = ['200', '301', '400', '401', '403', '404', '405', '500']
         self.log = defaultdict(int)
 
     def run(self):
+        """ executes the parser """
         signal.signal(signal.SIGINT, self.signal_handler)
         i = 1
         for line in sys.stdin:
@@ -52,23 +55,23 @@ def line_format_is_ok(line):
         size = line[8]
         if not ip_format_is_ok(ip):
             return False
-#        print('    - ip format: OK')
+            #        print('    - ip format: OK')
 
         if not dash == '-':
             return False
-#        print('    - dash format: OK')
+            #        print('    - dash format: OK')
 
         if not date_format_is_ok(date):
             return False
-#        print('    - date format: OK')
+            #        print('    - date format: OK')
 
         if not time_format_is_ok(time):
             return False
-#        print('    - time format: OK')
+            #        print('    - time format: OK')
 
         if expected_method_path_prot != ' '.join([method, path, protocol]):
             return False
-#        print('    - method format: OK')
+            #        print('    - method format: OK')
 
         if code not in codes:
             return False
@@ -143,6 +146,7 @@ def ip_format_is_ok(ip):
 
 
 def main():
+    """ entry point to module """
     LogParser().run()
 
 
