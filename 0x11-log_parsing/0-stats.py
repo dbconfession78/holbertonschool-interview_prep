@@ -1,15 +1,18 @@
 #!/usr/bin/python3
+""" 0-stats - tracks response codes and total file size """
 from collections import defaultdict
 import signal
 import sys
 
 
 def signal_handler(signal, frame):
+    """ outputs stats and exits app """
     output()
     sys.exit(0)
 
 
 def output():
+    """ outputs current state of code count and total file size """
     print("File size: {}".format(size))
     for code in codes:
         if _dict.get(code):
