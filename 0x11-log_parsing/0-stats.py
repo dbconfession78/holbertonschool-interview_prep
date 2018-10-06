@@ -36,7 +36,8 @@ class LogParser:
     def signal_handler(self, signal, frame):
         """ outputs stats and exits app """
         self.print_stats()
-        sys.exit(0)
+        os.killpg(os.getpid(), -9)
+        #        sys.exit(0)
 
 
 def line_format_is_ok(line):
