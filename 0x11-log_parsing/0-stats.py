@@ -3,9 +3,6 @@
 from collections import defaultdict
 import signal
 import sys
-import os
-import psutil
-from time import sleep
 
 
 class LogParser:
