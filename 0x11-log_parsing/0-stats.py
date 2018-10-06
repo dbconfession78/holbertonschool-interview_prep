@@ -3,6 +3,7 @@
 from collections import defaultdict
 import signal
 import sys
+import os
 
 
 class LogParser:
@@ -36,7 +37,7 @@ class LogParser:
     def signal_handler(self, signal, frame):
         """ outputs stats and exits app """
         self.print_stats()
-        os.killpg(os.getpid(), -9)
+        os.kill(os.getpid(), 9)
         #        sys.exit(0)
 
 
