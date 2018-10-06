@@ -4,6 +4,8 @@ from collections import defaultdict
 import signal
 import sys
 import os
+import psutil
+from time import sleep
 
 
 class LogParser:
@@ -37,8 +39,7 @@ class LogParser:
     def signal_handler(self, signal, frame):
         """ outputs stats and exits app """
         self.print_stats()
-        os.kill(os.getpid(), 9)
-        #        sys.exit(0)
+        sys.exit(-1)
 
 
 def line_format_is_ok(line):
@@ -57,23 +58,18 @@ def line_format_is_ok(line):
         size = line[8]
         if not ip_format_is_ok(ip):
             return False
-            #        print('    - ip format: OK')
 
         if not dash == '-':
             return False
-            #        print('    - dash format: OK')
 
         if not date_format_is_ok(date):
             return False
-            #        print('    - date format: OK')
 
         if not time_format_is_ok(time):
             return False
-            #        print('    - time format: OK')
 
         if expected_method_path_prot != ' '.join([method, path, protocol]):
             return False
-            #        print('    - method format: OK')
 
         if code not in codes:
             return False
