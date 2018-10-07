@@ -1,4 +1,4 @@
-#!/usr//bin/python3
+#!/usr/bin/python3
 """ 0-stats - tracks response codes and total file size """
 from collections import defaultdict
 import signal
@@ -18,9 +18,6 @@ class LogParser:
         signal.signal(signal.SIGINT, self.signal_handler)
         i = 1
         for line in sys.stdin:
-            #        while True:
-            #            try:
-            #   line = input()
             line = line.split()
             if line_format_is_ok(line):
                 status = line[7]
@@ -29,8 +26,6 @@ class LogParser:
                 if i % 10 == 0 and i > 0:
                     self.print_stats()
                 i += 1
-#            except Exception:
-#                self.print_stats()
 
     def print_stats(self):
         """ outputs current state of code count and total file size """
@@ -41,7 +36,7 @@ class LogParser:
     def signal_handler(self, signal, frame):
         """ outputs stats and exits app """
         self.print_stats()
-        sys.exit(0)
+        sys.exit(-1)
 
 
 def line_format_is_ok(line):
