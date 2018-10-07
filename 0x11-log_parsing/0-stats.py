@@ -17,15 +17,20 @@ class LogParser:
         """ executes the parser """
         signal.signal(signal.SIGINT, self.signal_handler)
         i = 1
-        for line in sys.stdin:
-            line = line.split()
-            if line_format_is_ok(line):
-                status = line[7]
-                self.size += int(line[8])
-                self.log[status] += 1
-                if i % 10 == 0 and i > 0:
-                    self.print_stats()
-                i += 1
+        while True:
+            try:
+                line = input()
+                line = line.split()
+                if line_format_is_ok(line):
+                    status = line[7]
+                    self.size += int(line[8])
+                    self.log[status] += 1
+                    if i % 10 == 0 and i > 0:
+                        self.print_stats()
+                    i += 1
+            except Exception:
+                self.print_stats()
+                exit(0)
 
     def print_stats(self):
         """ outputs current state of code count and total file size """
