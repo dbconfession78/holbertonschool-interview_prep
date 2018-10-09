@@ -10,7 +10,7 @@ class LogParser:
     def __init__(self):
         """ initializes LogParser """
         self.size = 0
-        self.codes = ['200', '301', '400', '401', '403', '404', '405', '500']
+        self.codes = {'200', '301', '400', '401', '403', '404', '405', '500'}
         self.log = defaultdict(int)
 
     def run(self):
@@ -21,10 +21,13 @@ class LogParser:
             try:
                 line = input()
                 line = line.split()
+                if len(line) == 7:
+                    line = check_and_handle_dash_without_spaces(line)
                 if line_format_is_ok(line):
                     status = line[7]
+                    if status in self.codes:
+                        self.log[status] += 1
                     self.size += int(line[8])
-                    self.log[status] += 1
                     if i % 10 == 0 and i > 0:
                         self.print_stats()
                     i += 1
@@ -44,11 +47,22 @@ class LogParser:
         sys.exit(-1)
 
 
+def check_and_handle_dash_without_spaces(line):
+    if '-' in line[0]:
+        index_of_first_dash = line[0].find('-')
+        new_line = [line[0][:index_of_first_dash]]
+        new_line += ['-']
+        new_line += [line[0][index_of_first_dash + 1:]]
+        new_line += line[1:]
+        return new_line
+    return line
+
+
 def line_format_is_ok(line):
     """ checks if input line is in the correct format """
     if len(line) == 9:
         expected_method_path_prot = '"GET /projects/260 HTTP/1.1"'
-        codes = {'200', '301', '400', '401', '403', '404', '405', '500'}
+#        codes = {'200', '301', '400', '401', '403', '404', '405', '500'}
         ip = line[0]
         dash = line[1]
         date = line[2]
@@ -73,11 +87,13 @@ def line_format_is_ok(line):
         if expected_method_path_prot != ' '.join([method, path, protocol]):
             return False
 
-        if code not in codes:
-            return False
+        # if code not in codes:
+            # return False
 
         if not size.isnumeric():
             return False
+    else:
+        return False
 
     return True
 
@@ -135,7 +151,12 @@ def time_format_is_ok(time):
 
 def ip_format_is_ok(ip):
     """ checks format of ip address """
-    if ip.count('.') != 3:
+    dot_count = ip.count('.')
+
+    if dot_count == 0:
+        return True
+
+    if dot_count != 3:
         return False
 
     ip = ip.split('.')
