@@ -62,7 +62,6 @@ def line_format_is_ok(line):
     """ checks if input line is in the correct format """
     if len(line) == 9:
         expected_method_path_prot = '"GET /projects/260 HTTP/1.1"'
-#        codes = {'200', '301', '400', '401', '403', '404', '405', '500'}
         ip = line[0]
         dash = line[1]
         date = line[2]
@@ -86,9 +85,6 @@ def line_format_is_ok(line):
 
         if expected_method_path_prot != ' '.join([method, path, protocol]):
             return False
-
-        # if code not in codes:
-            # return False
 
         if not size.isnumeric():
             return False
