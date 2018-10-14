@@ -5,10 +5,11 @@ import json
 import requests
 
 
-def count_words(subreddit, word_list, after=None):
+def count_words(subreddit, word_list, original_word_list=None, after=None):
     """  queries the Reddit API for hottest posts in subreddit, 'subreddit' and
     searches for number of time each word in 'word_list appears'"""
-
+    if not original_word_list:
+        original_word_list = [x for x in word_list]
     subreddit = subreddit.lower()
     if type(word_list) is list:
         results_dict = {word.lower(): 0 for word in word_list}
@@ -28,9 +29,9 @@ def count_words(subreddit, word_list, after=None):
         results_dict = update_word_count(title, results_dict)
 
     if after is None:
-        print_results(results_dict)
+        print_results(original_word_list, results_dict)
     else:
-        count_words(subreddit, results_dict, after)
+        count_words(subreddit, results_dict, original_word_list, after)
 
 
 def update_word_count(title, results_dict):
@@ -57,13 +58,13 @@ def get_articles(subreddit, after):
     return response
 
 
-def print_results(results):
+def print_results(word_list, results):
     """ prints the query results """
-
     results_info = []
     keys = results.keys()
-    for (i, elem) in enumerate(keys):
-        results_info.append({'key': elem, 'count': results[elem]})
+    for (i, elem) in enumerate(word_list):
+        if elem in results.keys():
+            results_info.append({'key': elem, 'count': results[elem]})
     results_info = sorted(results_info, key=lambda k: k['count'])[::-1]
     for elem in results_info:
         if results[elem['key']] > 0:
