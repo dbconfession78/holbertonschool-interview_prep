@@ -96,7 +96,7 @@ List *add_node_begin(List **list, char *str)
 	last->next = new;
 	*list = new;
 
-	return (new);
+	return (*list);
 }
 
 /**
