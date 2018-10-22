@@ -1,6 +1,5 @@
 #include "list.h"
 #include <string.h>
-#include <stdlib.h>
 
 /**
  * add_node_end - adds a new node to the end of a double circular linked list
@@ -27,22 +26,17 @@ List *add_node_end(List **list, char *str)
 	}
 
 	if (*list == NULL)
-		new->next = new;
-	else
-		new->next = *list;
-
-	if (*list == NULL)
-		new->prev = new;
-	else
-		new->prev = (*list)->prev;
-
-	if (*list != NULL)
 	{
-		(*list)->prev->next = new;
-		(*list)->prev = new;
-	}
-	else
+		new->next = new;
+		new->prev = new;
 		*list = new;
+		return (new);
+	}
+
+	new->next = *list;
+	new->prev = (*list)->prev;
+	new->prev->next = new;
+	(*list)->prev = new;
 	return (new);
 }
 
@@ -56,7 +50,6 @@ List *add_node_end(List **list, char *str)
  */
 List *add_node_begin(List **list, char *str)
 {
-/*	List *first, *last, *new; */
 	List *new = NULL;
 
 	if (list == NULL || str == NULL)
@@ -74,20 +67,16 @@ List *add_node_begin(List **list, char *str)
 	}
 
 	if (*list == NULL)
-		new->next = new;
-	else
-		new->next = *list;
-
-	if (*list == NULL)
-		new->prev = new;
-	else
-		new->prev = (*list)->prev;
-
-	if (*list != NULL)
 	{
-		(*list)->prev->next = new;
-		(*list)->prev = new;
+		new->next = new;
+		new->prev = new;
+		*list = new;
+		return (new);
 	}
-	*list = new;
+
+	new->next = *list;
+	new->prev = (*list)->prev;
+	(*list)->prev = new;
+	new->prev->next = new;
 	return (new);
 }
