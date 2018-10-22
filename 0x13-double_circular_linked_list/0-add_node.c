@@ -1,5 +1,4 @@
 #include "list.h"
-#include <string.h>
 
 /**
  * add_node_end - adds a new node to the end of a double circular linked list
@@ -42,8 +41,7 @@ List *add_node_end(List **list, char *str)
 
 
 /**
- * add_node_begin - adds a new node to the beginning of a double
- *                  circular linked list
+ * add_node_begin - adds a new node to the beginning of a circular dll
  * @list: list to modify
  * @str: string to copy into the new node
  * Return: address of new node, or NULL on failure
