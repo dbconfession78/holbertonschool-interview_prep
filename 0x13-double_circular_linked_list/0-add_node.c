@@ -10,29 +10,39 @@
  */
 List *add_node_end(List **list, char *str)
 {
-	List *first, *last, *new;
+	List *new = NULL;
+
+	if (list == NULL || str == NULL)
+		return (NULL);
+
+	new = malloc(sizeof(List));
+	if (new == NULL)
+		return (NULL);
+
+	new->str = strdup(str);
+	if (new->str == NULL)
+	{
+		free(new);
+		return (NULL);
+	}
 
 	if (*list == NULL)
-	{
-		first = malloc(sizeof(List *));
-		first->next = first;
-		first->prev = first;
-		first->str = malloc(sizeof(str));
-		first->str = strdup(str);
-		*list = first;
-		return (first);
-	}
-	first = *list;
-	last = malloc(sizeof(List *));
-	last = first->prev;
-	new = malloc(sizeof(List *));
-	new->str = malloc(sizeof(str));
-	new->str = strdup(str);
+		new->next = new;
+	else
+		new->next = *list;
 
-	last->next = new;
-	new->prev = last;
-	new->next = *list;
-	first->prev = new;
+	if (*list == NULL)
+		new->prev = new;
+	else
+		new->prev = (*list)->prev;
+
+	if (*list != NULL)
+	{
+		(*list)->prev->next = new;
+		(*list)->prev = new;
+	}
+	else
+		*list = new;
 	return (new);
 }
 
@@ -46,30 +56,38 @@ List *add_node_end(List **list, char *str)
  */
 List *add_node_begin(List **list, char *str)
 {
-	List *first, *last, *new;
+/*	List *first, *last, *new; */
+	List *new = NULL;
+
+	if (list == NULL || str == NULL)
+		return (NULL);
+
+	new = malloc(sizeof(List));
+	if (new == NULL)
+		return (NULL);
+
+	new->str = strdup(str);
+	if (new->str == NULL)
+	{
+		free(new);
+		return (NULL);
+	}
 
 	if (*list == NULL)
+		new->next = new;
+	else
+		new->next = *list;
+
+	if (*list == NULL)
+		new->prev = new;
+	else
+		new->prev = (*list)->prev;
+
+	if (*list != NULL)
 	{
-		first = malloc(sizeof(List *));
-		first->next = first;
-		first->prev = first;
-		first->str = malloc(sizeof(str));
-		first->str = strdup(str);
-		*list = first;
-		return (first);
+		(*list)->prev->next = new;
+		(*list)->prev = new;
 	}
-	first = *list;
-	last = malloc(sizeof(List *));
-	last = first->prev;
-	new = malloc(sizeof(List *));
-	new->str = malloc(sizeof(str));
-	new->str = strdup(str);
-
-	new->next = first;
-	new->prev = last;
-	first->prev = new;
-	last->next = new;
 	*list = new;
-
-	return (*list);
+	return (new);
 }
