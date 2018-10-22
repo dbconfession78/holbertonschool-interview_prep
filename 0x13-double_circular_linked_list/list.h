@@ -14,7 +14,8 @@
  * Description: doubly linked list node structure
  * for Holberton project
  */
-typedef struct List {
+typedef struct List
+{
 	char *str;
 	struct List *prev;
 	struct List *next;
