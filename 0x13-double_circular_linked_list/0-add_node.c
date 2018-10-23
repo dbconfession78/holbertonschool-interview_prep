@@ -8,62 +8,74 @@
  */
 List *add_node_end(List **list, char *str)
 {
-	List *first, *last, *new;
+	List *new = NULL;
+
+	if (list == NULL || str == NULL)
+		return (NULL);
+
+	new = malloc(sizeof(List));
+	if (new == NULL)
+		return (NULL);
+
+	new->str = strdup(str);
+	if (new->str == NULL)
+	{
+		free(new);
+		return (NULL);
+	}
 
 	if (*list == NULL)
 	{
-		first = malloc(sizeof(List *));
-		first->next = first;
-		first->prev = first;
-		first->str = str;
-		*list = first;
-		return (first);
+		new->next = new;
+		new->prev = new;
+		*list = new;
+		return (new);
 	}
-	first = *list;
-	last = malloc(sizeof(List *));
-	last = first->prev;
-	new = malloc(sizeof(List *));
-	new->str = str;
 
-	last->next = new;
-	new->prev = last;
 	new->next = *list;
-	first->prev = new;
+	new->prev = (*list)->prev;
+	new->prev->next = new;
+	(*list)->prev = new;
 	return (new);
 }
 
 
 /**
- * add_node_begin - adds a new node to the beginning of a double
- *                  circular linked list
+ * add_node_begin - adds a new node to the beginning of a circular dll
  * @list: list to modify
  * @str: string to copy into the new node
  * Return: address of new node, or NULL on failure
  */
 List *add_node_begin(List **list, char *str)
 {
-	List *first, *last, *new;
+	List *new = NULL;
+
+	if (list == NULL || str == NULL)
+		return (NULL);
+
+	new = malloc(sizeof(List));
+	if (new == NULL)
+		return (NULL);
+
+	new->str = strdup(str);
+	if (new->str == NULL)
+	{
+		free(new);
+		return (NULL);
+	}
 
 	if (*list == NULL)
 	{
-		first = malloc(sizeof(List *));
-		first->next = first;
-		first->prev = first;
-		first->str = str;
-		*list = first;
-		return (first);
+		new->next = new;
+		new->prev = new;
+		*list = new;
+		return (new);
 	}
-	first = *list;
-	last = malloc(sizeof(List *));
-	last = first->prev;
-	new = malloc(sizeof(List *));
-	new->str = str;
 
-	new->next = first;
-	new->prev = last;
-	first->prev = new;
-	last->next = new;
+	new->next = *list;
+	new->prev = (*list)->prev;
+	(*list)->prev = new;
+	new->prev->next = new;
 	*list = new;
-
-	return (*list);
+	return (new);
 }
